@@ -47,22 +47,6 @@ O objetivo do projeto foi construir uma aplicação web estilo Wikipedia desenvo
 
 ---
 
-## 🖼️ Demonstração Visual
-
-| Página Inicial / Todas as Páginas | Artigo / Renderização Markdown |
-| :---: | :---: |
-| ![Index Page](assets/index.png) | ![Entry Page](assets/entry.png) |
-
-| Busca / Resultados | Criar Nova Página |
-| :---: | :---: |
-| ![Search Page](assets/search.png) | ![Create Page](assets/create.png) |
-
-| Editar Página | Excluir Página |
-| :---: | :---: |
-| ![Edit Page](assets/edit.png) | ![Delete Page](assets/delete.png) |
-
----
-
 ## 🎨 Design e Estilização
 
 - **Layout Limpo**: Menu lateral fixo (*sidebar*) com navegação simples e direta para as principais rotas da aplicação.
