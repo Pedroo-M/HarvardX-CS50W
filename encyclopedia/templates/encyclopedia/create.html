@@ -1,0 +1,18 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block head %}
+    <title>Create</title>
+{% endblock %}
+
+{% block body %}
+    <h1>New Wiki</h1>
+    <div style="height: 200px; display: flex;">
+        <form action="{% url 'create' %}" method="post" style="display: flex; flex-direction: column; gap: 10px;">
+            {% csrf_token %}
+            <input type="text" placeholder="Title" name="title">
+            <textarea name="desc" id="desc" rows="3" cols="30" style="width: 188px;" placeholder="Description" ></textarea>
+            <input type="submit">
+        </form>
+    </div>
+
+{% endblock %}
