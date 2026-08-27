@@ -1,47 +1,79 @@
+# HarvardX-CS50W
+CS50's Web Programming with Python and JavaScript
+
 # 📚 CS50W - Project 1: Wiki
 
-Uma aplicação web estilo Wikipedia desenvolvida em **Python** com o framework **Django**, como parte dos requisitos do curso **CS50’s Web Programming with Python and JavaScript** da Harvard/edX.
+![CS50 Status](https://img.shields.io/badge/CS50W-Passed%20100%25-brightgreen)
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)
+![Django](https://img.shields.io/badge/Django-092E20?style=flat&logo=django&logoColor=white)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white)
+![Markdown](https://img.shields.io/badge/Markdown-000000?style=flat&logo=markdown&logoColor=white)
+
+Este repositório contém a minha solução para o **Project 1 (Wiki)** do curso **CS50’s Web Programming with Python and JavaScript** de Harvard.
+
+O objetivo do projeto foi construir uma aplicação web estilo Wikipedia desenvolvida em Django, permitindo criar, editar, visualizar e pesquisar artigos armazenados em formato Markdown, renderizando-os dinamicamente para HTML.
 
 ---
 
-## 📌 Sobre o Projeto
+## 📌 Páginas e Funcionalidades do Projeto
 
-O **Wiki** é uma enciclopédia online que permite aos usuários visualizar, pesquisar, criar, editar e excluir artigos. O conteúdo de cada artigo é escrito e armazenado no formato **Markdown** e convertido dinamicamente para HTML no momento da renderização.
+- **Entry Page (`/wiki/TITLE`)**:
+  - Exibe o conteúdo formatado do artigo solicitado.
+  - Converte o texto escrito em Markdown para HTML.
+  - Exibe uma mensagem de erro personalizada caso a entrada não exista.
+
+- **Index Page (`/`)**:
+  - Lista todas as páginas enciclopédicas cadastradas.
+  - Permite clicar em qualquer item para ser direcionado diretamente à entrada correspondente.
+
+- **Search (`/search/`)**:
+  - Se a consulta for idêntica ao nome de uma entrada, o usuário é direcionado diretamente para ela.
+  - Se for uma substring, exibe uma lista de resultados que contêm o termo pesquisado.
+
+- **New Page (`/create/`)**:
+  - Formulário para criar um novo artigo com campos de título e área de texto em Markdown.
+  - Valida se o artigo já existe para evitar duplicações de conteúdo.
+
+- **Edit Page (`/edit/TITLE`)**:
+  - Permite editar o conteúdo Markdown de qualquer entrada existente.
+  - Pré-carrega o conteúdo atual da página na área de edição.
+
+- **Random Page (`/random/`)**:
+  - Seleciona e redireciona o usuário para uma página aleatória da enciclopédia.
+
+- **Delete Page (`/delete/`)**:
+  - Funcionalidade adicional para exclusão de artigos da base de dados com feedback visual do estado da ação.
 
 ---
 
-## ⚙️ Funcionalidades
+## 🖼️ Demonstração Visual
 
-- **Visualização de Entradas (Entry Page):** Acessar `/wiki/TITULO` exibe a página do artigo correspondente. Caso a entrada não exista, é exibida uma página de erro 404/not found.
-- **Página Inicial (Index Page):** Exibe uma lista com hiperlinks para todas as entradas cadastradas no sistema.
-- **Busca (Search):**
-  - Se a busca for idêntica ao nome de uma entrada existente, o usuário é redirecionado diretamente para ela.
-  - Se for uma substring de uma ou mais entradas, exibe uma lista de resultados contendo todas as páginas correspondentes.
-- **Criar Nova Página (New Page):** Permite criar novos artigos informando um título e o conteúdo em sintaxe Markdown. Há validação para prevenir a sobrescrita de artigos já existentes.
-- **Editar Página (Edit Page):** Permite alterar o conteúdo Markdown de qualquer artigo existente.
-- **Página Aleatória (Random Page):** Redireciona o usuário para uma entrada escolhida aleatoriamente.
-- **Excluir Página (Delete Page):** Permite a remoção permanente de um artigo da base de dados/sistema de arquivos.
+| Página Inicial / Todas as Páginas | Artigo / Renderização Markdown |
+| :---: | :---: |
+| ![Index Page](assets/index.png) | ![Entry Page](assets/entry.png) |
+
+| Busca / Resultados | Criar Nova Página |
+| :---: | :---: |
+| ![Search Page](assets/search.png) | ![Create Page](assets/create.png) |
+
+| Editar Página | Excluir Página |
+| :---: | :---: |
+| ![Edit Page](assets/edit.png) | ![Delete Page](assets/delete.png) |
+
+---
+
+## 🎨 Design e Estilização
+
+- **Layout Limpo**: Menu lateral fixo (*sidebar*) com navegação simples e direta para as principais rotas da aplicação.
+- **Renderização Dinâmica**: Integração fluida entre o processamento do backend (Django) e os templates HTML.
+- **CSS Modular**: Estilização mantida em arquivos CSS dedicados para garantir um visual padronizado em todas as páginas.
 
 ---
 
 ## 🛠️ Tecnologias Utilizadas
 
-- **Python 3**
-- **Django** (Framework Web Backend)
-- **Markdown2 / Markdown** (Conversão de Markdown para HTML)
-- **HTML5 & CSS3**
-
----
-
-## 📁 Estrutura de Arquivos
-
-```text
-wiki/
-├── entries/              # Arquivos .md com os artigos (CSS.md, Python.md, Django.md, etc.)
-├── encyclopedia/         # Aplicação principal Django
-│   ├── templates/        # Templates HTML (index, entry, create, edit, delete, etc.)
-│   ├── urls.py           # Mapeamento de rotas e URLs
-│   ├── views.py          # Lógica das requisições e respostas
-│   └── util.py           # Funções auxiliares para manipular arquivos Markdown
-├── manage.py             # CLI do Django
-└── requirements.txt      # Dependências do projeto
+- **Python 3**: Linguagem principal para desenvolvimento da lógica no backend.
+- **Django**: Framework web para roteamento, renderização de templates e controle das requisições.
+- **Markdown2 / Markdown**: Biblioteca Python para conversão de sintaxe Markdown em HTML.
+- **HTML5 & CSS3**: Estruturação semântica e estilização visual das páginas.
