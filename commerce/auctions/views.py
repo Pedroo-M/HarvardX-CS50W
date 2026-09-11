@@ -14,6 +14,16 @@ def index(request):
         "auctions_list": auctions_list
     })
 
+def auction(request, auction_id):
+    try:
+        listing = Auction.objects.get(pk=auction_id)
+    except Auction.DoesNotExist:
+        pass
+
+    return render(request, "auctions/auction.html", {
+        "auction": listing
+    })
+
 
 def login_view(request):
     if request.method == "POST":
@@ -80,3 +90,10 @@ def create(request):
         return HttpResponseRedirect(reverse("index"))
     
     return render(request, "auctions/create.html")
+
+def bid(request):
+    if request.methoon == "POST":
+        value = request.POST["value"]
+        user = request.user
+
+        Bids.objects.create(auction=auction, value=value, user=user)

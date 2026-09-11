@@ -1,9 +1,31 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'auctions/styles.css' %}">
+
 
 {% block body %}
     <h2>Active Listings</h2>
 
     {% for auction in auctions_list %}
-        <a href="{% url auction/ auction.id %}">{{auction.title}}</a>
+        <div class="b" style="grid-row: inherit; display: flex; border: 1px solid gray; margin-bottom: 50px; border-radius: 3px;">
+            <div style="padding-right: 50px;">
+                <a href="{% url 'auction' auction.id %}"><img src="{{auction.image}}" alt="" width="300" height="200"></a>
+            </div>
+            <div style="padding-top: 20px;">
+                <h5><strong>{{auction.title}}</strong></h3>
+                <h6><strong>Price:</strong> ${{auction.initial_value}}</h6>
+                {% if auction.description %}
+                    <h8 style="color: black;">{{auction.description}}</h8>
+                {% else %}
+                    {{empty}}
+                {% endif %}
+                {% if auction.datetime %}
+                <h9 style="color: gray;">{{auction.datetime}}</h9>
+                {% else %}
+                    {{empty}}
+                {% endif %}
+            </div>
+        </div>
     {% endfor %}
 {% endblock %}

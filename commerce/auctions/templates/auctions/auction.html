@@ -1,15 +1,18 @@
 {% extends "auctions/layout.html" %}
-
 {% block body %}
-    <h1>Listing:{auction.title}</h1>
+    <h1>Listing: {{auction.title}}</h1>
 
     {% if auction.image %}
-        {{auction.image}}
+        <img src="{{auction.image}}" alt="">
     {% else %}
         {{empty}}
     {% endif %}
 
     <p>{{auction.description}}</p>
+    <h5>R${{auction.initial_value}}</h5>
+    <form action=""></form>
 
-    <h2>R${{auction.initial_value}}</h2>
+    <h5>Details: </h5>
+    <ul>Listed by: {{auction.user}}</ul>
+    <ul>Category: {{auction.category}}</ul>
 {% endblock %}
