@@ -1,16 +1,23 @@
 {% extends "auctions/layout.html" %}
 {% block body %}
     <h1>Listing: {{auction.title}}</h1>
+    {% if wishlist %}
+    <form action="{% url 'deletewishlist' auction_id %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="Remove from Wishlist">
+    </form>
+    {% else %}
     <form action="{% url 'wishlist' auction_id %}" method="POST">
         {% csrf_token %}
         <input type="submit" value="Add to Wishlist">
     </form>
+    {% endif %}
     {% if message %}
         <h5>{{message}}</h5>
     {% endif %}
 
     {% if auction.image %}
-        <img src="{{auction.image}}" alt="">
+        <img src="{{auction.image}}" alt="" width="500px" height="300px">
     {% else %}
         {{empty}}
     {% endif %}

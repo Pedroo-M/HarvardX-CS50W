@@ -9,13 +9,20 @@ from .models import User, Auction, Bids, Comments, Wishlist
 
 def index(request):
     auctions_list = Auction.objects.all()
+    user = request.user
+
+    wishes_number = Wishlist.objects.filter(user=user).count()
 
     return render(request, "auctions/index.html", {
-        "auctions_list": auctions_list
+        "auctions_list": auctions_list,
+        "wishes_number": wishes_number
     })
 
 def auction(request, auction_id):
+    user = request.user
+    auction = get_object_or_404(Auction, pk=auction_id)
     antigo_bid = Bids.objects.filter(auction_id=auction_id).order_by("value").last()
+    wishlist = Wishlist.objects.filter(user=user,auction=auction).exists()
 
     try:
         listing = Auction.objects.get(pk=auction_id)
@@ -25,7 +32,8 @@ def auction(request, auction_id):
     return render(request, "auctions/auction.html", {
         "auction": listing,
         "auction_id": auction_id,
-        "antigo_bid": antigo_bid
+        "antigo_bid": antigo_bid,
+        "wishlist": wishlist
     })
 
 
@@ -123,10 +131,6 @@ def wishlist(request, auction_id):
     if request.method == "POST":
         user = request.user
         auction = get_object_or_404(Auction, pk=auction_id)
-
-        wishlist = Wishlist.objects.filter(user=user,auction=auction).exists()
-        if wishlist:
-            return redirect("auction", auction_id=auction_id)
         
         Wishlist.objects.create(user=user, auction=auction)
 
@@ -135,6 +139,15 @@ def wishlist(request, auction_id):
         "auction_id": auction_id
     })
 
+def deletewishlist(request, auction_id):
+    if request.method == "POST":
+        user = request.user
+        auction = get_object_or_404(Auction, pk=auction_id)
+
+        Wishlist.objects.filter(user=user, auction=auction).delete()
+    
+        return HttpResponseRedirect(reverse("auction", kwargs={"auction_id": auction_id}))
+    
 def showwishlist(request):
     user = request.user
 

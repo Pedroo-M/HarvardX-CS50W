@@ -25,7 +25,11 @@
                     <a class="nav-item" href="{% url 'create' %}">Create Listing</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-item" href="{% url 'showwishlist' %}">Wishlist</a>
+                    <a class="nav-item" href="{% url 'showwishlist' %}">Wishlist
+                        {% if wishes_number %}
+                            {{wishes_number}}
+                        {% endif %}
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
