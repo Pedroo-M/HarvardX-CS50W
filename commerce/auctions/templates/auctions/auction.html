@@ -1,6 +1,13 @@
 {% extends "auctions/layout.html" %}
 {% block body %}
     <h1>Listing: {{auction.title}}</h1>
+    <form action="{% url 'wishlist' auction_id %}" method="POST">
+        {% csrf_token %}
+        <input type="submit" value="Add to Wishlist">
+    </form>
+    {% if message %}
+        <h5>{{message}}</h5>
+    {% endif %}
 
     {% if auction.image %}
         <img src="{{auction.image}}" alt="">
@@ -10,7 +17,21 @@
 
     <p>{{auction.description}}</p>
     <h5>R${{auction.initial_value}}</h5>
-    <form action=""></form>
+
+    <h5>Place your bid</h5>
+    
+        {% if antigo_bid %}
+            <p>Current Bid: ${{antigo_bid.value}}</p>
+        {% else %}
+            <p>Try the first Bid</p>
+        {% endif %}
+
+    <form action="{% url 'bid' auction_id %}" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="auction_id" value="{{auction_id}}">
+        <input type="number" name="value" placeholder="value" value="{{atual_bid}}" step="0.01">
+        <input type="submit" value="submit">
+    </form>
 
     <h5>Details: </h5>
     <ul>Listed by: {{auction.user}}</ul>

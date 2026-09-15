@@ -1,10 +1,10 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 
-from .models import User, Auction, Bids, Comments
+from .models import User, Auction, Bids, Comments, Wishlist
 
 
 def index(request):
@@ -15,13 +15,17 @@ def index(request):
     })
 
 def auction(request, auction_id):
+    antigo_bid = Bids.objects.filter(auction_id=auction_id).order_by("value").last()
+
     try:
         listing = Auction.objects.get(pk=auction_id)
     except Auction.DoesNotExist:
         pass
 
     return render(request, "auctions/auction.html", {
-        "auction": listing
+        "auction": listing,
+        "auction_id": auction_id,
+        "antigo_bid": antigo_bid
     })
 
 
@@ -91,9 +95,51 @@ def create(request):
     
     return render(request, "auctions/create.html")
 
-def bid(request):
-    if request.methoon == "POST":
-        value = request.POST["value"]
+def bid(request, auction_id):
+    if request.method == "POST":
+        value = float(request.POST["value"])
         user = request.user
 
-        Bids.objects.create(auction=auction, value=value, user=user)
+        antigo_bid = Bids.objects.filter(auction_id=auction_id).order_by("value").last()
+
+        auction = get_object_or_404(Auction, pk=auction_id)
+
+        if antigo_bid is None or value > antigo_bid.value:
+            antigo_bid = Bids.objects.create(auction=auction, value=value, user=user)
+
+            return HttpResponseRedirect(reverse("auction", kwargs={"auction_id": auction_id}))
+            
+        else:
+            return render(request, "auctions/auction.html",{
+                "error": "Bid needs to be bigger than the actual bid",
+                "atual_bid": antigo_bid,
+                "auction_id": auction_id
+            })
+    return render(request, "auctions/auction.html", {
+        "auction_id": auction_id
+    })
+
+def wishlist(request, auction_id):
+    if request.method == "POST":
+        user = request.user
+        auction = get_object_or_404(Auction, pk=auction_id)
+
+        wishlist = Wishlist.objects.filter(user=user,auction=auction).exists()
+        if wishlist:
+            return redirect("auction", auction_id=auction_id)
+        
+        Wishlist.objects.create(user=user, auction=auction)
+
+        return HttpResponseRedirect(reverse("auction", kwargs={"auction_id": auction_id}))
+    return render (request, "auctions/auction.html", {
+        "auction_id": auction_id
+    })
+
+def showwishlist(request):
+    user = request.user
+
+    auctions_list = Auction.objects.filter(wishlist__user=request.user)
+
+    return render(request, "auctions/wishlist.html", {
+        "auctions_list": auctions_list
+    })

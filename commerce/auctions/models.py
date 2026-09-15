@@ -24,4 +24,8 @@ class Comments(models.Model):
     message = models.TextField(blank=False, null=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE, related_name="comments")
+
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="wishlist")
+    auction = models.ForeignKey(Auction, on_delete=models.CASCADE, related_name="wishlist")
     
