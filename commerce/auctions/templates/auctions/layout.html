@@ -27,7 +27,7 @@
                 <li class="nav-item">
                     <a class="nav-item" href="{% url 'showwishlist' %}">Wishlist
                         {% if wishes_number %}
-                            {{wishes_number}}
+                            <span class="wish_number">{{wishes_number}}</span>
                         {% endif %}
                     </a>
                 </li>

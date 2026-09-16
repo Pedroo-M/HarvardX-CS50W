@@ -24,11 +24,16 @@
 
     <p>{{auction.description}}</p>
     <h5>R${{auction.initial_value}}</h5>
-
-    <h5>Place your bid</h5>
     
         {% if antigo_bid %}
             <p>Current Bid: ${{antigo_bid.value}}</p>
+            {% if your_bid %}
+                <p>{{bids}} so far. Your bid is the current bid.</p>
+            {% elif have_bid %}
+                <p>{{bids}} in total. Your bid is not the current.</p>
+            {% else %}
+                <p>{{bids}} in total. You dont have a bid.</p>
+            {% endif %}
         {% else %}
             <p>Try the first Bid</p>
         {% endif %}
@@ -36,8 +41,8 @@
     <form action="{% url 'bid' auction_id %}" method="POST">
         {% csrf_token %}
         <input type="hidden" name="auction_id" value="{{auction_id}}">
-        <input type="number" name="value" placeholder="value" value="{{atual_bid}}" step="0.01">
-        <input type="submit" value="submit">
+        <input type="number" name="value" placeholder="Bid" value="{{atual_bid}}" step="0.01">
+        <input type="submit" value="Place Bid" style="background-color: rgb(0, 132, 255); color: white; border-radius: 4px; border: none;">
     </form>
 
     <h5>Details: </h5>

@@ -1,4 +1,40 @@
 body {
     padding: 10px;
 }
+ #index_auction_div {
+    grid-row: inherit; 
+    display: flex; 
+    border: 1px solid gray; 
+    margin-bottom: 50px; 
+    border-radius: 3px;
+ }
 
+ .image_pad {
+    padding-right: 50px;
+ }
+
+ .nav {
+    align-items: center;
+ }
+
+ .nav-item{
+    padding-right: 10px;
+    align-items: center;
+ }
+ 
+ .wish_number{
+    background-color:#6B7280;
+    color: white;
+    font-weight: bold;
+    display: inline-flex; 
+    justify-content: center;
+    align-items: center;
+    width: 1.8em;
+    height: 1.8em;
+    border-radius: 6px;
+    font-size: 0.8em;
+    position: relative;
+    top: -0.2em;
+    opacity: 1.0;
+    margin-left: 2px;
+ }

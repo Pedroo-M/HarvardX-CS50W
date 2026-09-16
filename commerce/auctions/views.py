@@ -10,8 +10,10 @@ from .models import User, Auction, Bids, Comments, Wishlist
 def index(request):
     auctions_list = Auction.objects.all()
     user = request.user
-
-    wishes_number = Wishlist.objects.filter(user=user).count()
+    if request.user.is_authenticated:
+        wishes_number = Wishlist.objects.filter(user=user).count()
+    else:
+        wishes_number = None
 
     return render(request, "auctions/index.html", {
         "auctions_list": auctions_list,
@@ -23,6 +25,15 @@ def auction(request, auction_id):
     auction = get_object_or_404(Auction, pk=auction_id)
     antigo_bid = Bids.objects.filter(auction_id=auction_id).order_by("value").last()
     wishlist = Wishlist.objects.filter(user=user,auction=auction).exists()
+    bids = Bids.objects.filter(auction_id=auction_id).count
+    wishes_number = Wishlist.objects.filter(user=user).count()
+
+    if antigo_bid.user == user:
+        your_bid = antigo_bid
+    if antigo_bid.user != user:
+        have_bid = Bids.objects.filter(auction_id=auction_id, user=user).exists()
+    else:
+        have_bid = None
 
     try:
         listing = Auction.objects.get(pk=auction_id)
@@ -33,7 +44,11 @@ def auction(request, auction_id):
         "auction": listing,
         "auction_id": auction_id,
         "antigo_bid": antigo_bid,
-        "wishlist": wishlist
+        "wishlist": wishlist,
+        "bids": bids,
+        "your_bid": your_bid,
+        "have_bid": have_bid,
+        "wishes_number": wishes_number
     })
 
 
@@ -118,11 +133,10 @@ def bid(request, auction_id):
             return HttpResponseRedirect(reverse("auction", kwargs={"auction_id": auction_id}))
             
         else:
-            return render(request, "auctions/auction.html",{
-                "error": "Bid needs to be bigger than the actual bid",
-                "atual_bid": antigo_bid,
-                "auction_id": auction_id
-            })
+            return render (request, "auctions/auction.html", {
+                    "auction_id": auction_id,
+                    "error": "Bid needs to be bigger than the actual bid",
+                })
     return render(request, "auctions/auction.html", {
         "auction_id": auction_id
     })
@@ -131,12 +145,14 @@ def wishlist(request, auction_id):
     if request.method == "POST":
         user = request.user
         auction = get_object_or_404(Auction, pk=auction_id)
+        wishes_number = Wishlist.objects.filter(user=user).count()
         
         Wishlist.objects.create(user=user, auction=auction)
 
         return HttpResponseRedirect(reverse("auction", kwargs={"auction_id": auction_id}))
     return render (request, "auctions/auction.html", {
-        "auction_id": auction_id
+        "auction_id": auction_id,
+        "wishes_number": wishes_number
     })
 
 def deletewishlist(request, auction_id):
@@ -150,9 +166,10 @@ def deletewishlist(request, auction_id):
     
 def showwishlist(request):
     user = request.user
-
+    wishes_number = Wishlist.objects.filter(user=user).count()
     auctions_list = Auction.objects.filter(wishlist__user=request.user)
 
     return render(request, "auctions/wishlist.html", {
-        "auctions_list": auctions_list
+        "auctions_list": auctions_list,
+        "wishes_number": wishes_number
     })
