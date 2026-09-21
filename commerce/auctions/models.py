@@ -13,6 +13,7 @@ class Auction(models.Model):
     category = models.CharField(max_length=20, null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="auction")
     watchlist = models.ManyToManyField(User, blank=True, related_name="watchlist")
+    closed = models.BooleanField(blank=True, null=True)
     datetime = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
 class Bids(models.Model):

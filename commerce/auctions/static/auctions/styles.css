@@ -1,7 +1,8 @@
 body {
     padding: 10px;
 }
- #index_auction_div {
+
+#index_auction_div {
     grid-row: inherit; 
     display: flex; 
     border: 1px solid gray; 
@@ -9,20 +10,20 @@ body {
     border-radius: 3px;
  }
 
- .image_pad {
+.image_pad {
     padding-right: 50px;
  }
 
- .nav {
+.nav {
     align-items: center;
  }
 
- .nav-item{
+.nav-item{
     padding-right: 10px;
     align-items: center;
  }
  
- .wish_number{
+.wish_number{
     background-color:#6B7280;
     color: white;
     font-weight: bold;
@@ -38,3 +39,4 @@ body {
     opacity: 1.0;
     margin-left: 2px;
  }
+

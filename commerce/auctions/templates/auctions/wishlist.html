@@ -15,6 +15,9 @@
             <div style="padding-top: 20px;">
                 <h5><strong>{{auction.title}}</strong></h3>
                 <h6><strong>Price:</strong> ${{auction.initial_value}}</h6>
+                {% if auction.closed %}
+                    <h6><strong>Closed</strong></h6>
+                {% endif %}
                 {% if auction.description %}
                     <h8 style="color: black;">{{auction.description}}</h8>
                 {% else %}

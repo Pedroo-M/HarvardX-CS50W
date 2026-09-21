@@ -6,14 +6,18 @@ from django.urls import reverse
 
 from .models import User, Auction, Bids, Comments, Wishlist
 
-
-def index(request):
-    auctions_list = Auction.objects.all()
+def wishes(request):
     user = request.user
     if request.user.is_authenticated:
         wishes_number = Wishlist.objects.filter(user=user).count()
     else:
         wishes_number = None
+
+    return wishes_number
+
+def index(request):
+    auctions_list = Auction.objects.all()
+    wishes_number = wishes(request)
 
     return render(request, "auctions/index.html", {
         "auctions_list": auctions_list,
@@ -25,15 +29,32 @@ def auction(request, auction_id):
     auction = get_object_or_404(Auction, pk=auction_id)
     antigo_bid = Bids.objects.filter(auction_id=auction_id).order_by("value").last()
     wishlist = Wishlist.objects.filter(user=user,auction=auction).exists()
-    bids = Bids.objects.filter(auction_id=auction_id).count
+    bids = Bids.objects.filter(auction_id=auction_id).count()
+    comments = Comments.objects.filter(auction=auction)
     wishes_number = Wishlist.objects.filter(user=user).count()
+    your_bid = None
+    have_bid = None
+    category = auction.category
 
-    if antigo_bid.user == user:
-        your_bid = antigo_bid
-    if antigo_bid.user != user:
-        have_bid = Bids.objects.filter(auction_id=auction_id, user=user).exists()
+
+    if auction.closed == True:
+        winner = antigo_bid.user.username
+        if winner != user.username:
+            winner = None
     else:
-        have_bid = None
+        winner = None
+
+    if auction.user == user:
+        close = True
+    else:
+        close = None
+
+    if antigo_bid:
+        if antigo_bid.user == user:
+            your_bid = True
+        else:
+            have_bid = Bids.objects.filter(auction_id=auction_id, user=user).exists()
+        
 
     try:
         listing = Auction.objects.get(pk=auction_id)
@@ -48,7 +69,11 @@ def auction(request, auction_id):
         "bids": bids,
         "your_bid": your_bid,
         "have_bid": have_bid,
-        "wishes_number": wishes_number
+        "wishes_number": wishes_number,
+        "close": close,
+        "winner": winner,
+        "category": category,
+        "comments": comments
     })
 
 
@@ -104,6 +129,8 @@ def register(request):
         return render(request, "auctions/register.html")
 
 def create(request):
+    wishes_number = wishes(request)
+
     if request.method == "POST":
         user = request.user
         title = request.POST["title"]
@@ -116,7 +143,9 @@ def create(request):
         auction.save()
         return HttpResponseRedirect(reverse("index"))
     
-    return render(request, "auctions/create.html")
+    return render(request, "auctions/create.html", {
+        "wishes_number": wishes_number
+    })
 
 def bid(request, auction_id):
     if request.method == "POST":
@@ -173,3 +202,50 @@ def showwishlist(request):
         "auctions_list": auctions_list,
         "wishes_number": wishes_number
     })
+
+def closed(request, auction_id):
+    if request.method == "POST":
+        auction = get_object_or_404(Auction, pk=auction_id)
+        auction.closed = True
+        auction.save()
+
+        return HttpResponseRedirect(reverse("auction", kwargs={"auction_id": auction_id}))
+
+def category(request, category):
+    auctions_list = Auction.objects.filter(category__iexact=category)
+    user = request.user
+    if request.user.is_authenticated:
+        wishes_number = Wishlist.objects.filter(user=user).count()
+    else:
+        wishes_number = None
+
+    return render(request, "auctions/index.html", {
+        "auctions_list": auctions_list,
+        "wishes_number": wishes_number
+    })
+
+def message(request, auction_id):
+    if request.method == "POST":
+        message = request.POST["message"]
+        user = request.user
+        auction = get_object_or_404(Auction, pk=auction_id)
+
+        Comments.objects.create(message=message, user=user, auction=auction)
+
+        return HttpResponseRedirect(reverse("auction", kwargs={"auction_id": auction_id}))  
+
+def categories(request):
+    categories = []
+    auctions = Auction.objects.all()
+    wishes_number = wishes(request)
+
+    for auction in auctions:
+        if auction.closed == None:
+            if auction.category:
+                if auction.category not in categories:
+                    categories.append(auction.category)
+    
+    return render(request, "auctions/categories.html", {
+            "categories": categories,
+            "wishes_number": wishes_number
+        })

@@ -1,16 +1,43 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
 {% block body %}
-    <h1>Listing: {{auction.title}}</h1>
-    {% if wishlist %}
-    <form action="{% url 'deletewishlist' auction_id %}" method="POST">
-        {% csrf_token %}
-        <input type="submit" value="Remove from Wishlist">
-    </form>
+    <h2>Listing: {{auction.title}}</h2>
+    {% if auction.closed %}
+        {% if winner %}
+            <h2>You have won the Auction, {{winner}}!!!!</h2>
+        {% else %}
+            <h2>The auction was closed</h2>
+        {% endif %}
+    {% endif %}
+    {% if auction.closed %}
+        {{empty}}
     {% else %}
-    <form action="{% url 'wishlist' auction_id %}" method="POST">
-        {% csrf_token %}
-        <input type="submit" value="Add to Wishlist">
-    </form>
+        {% if wishlist %}
+        <form action="{% url 'deletewishlist' auction_id %}" method="POST">
+            {% csrf_token %}
+            <input type="submit" value="Remove from Wishlist" class="wish_button" 
+            style="background-color: #6c757d !important; color: #ffffff !important; border: none !important; 
+            border-radius: 6px !important; padding: 2px 6px !important; font-weight: bold !important; 
+            cursor: pointer !important;">
+        </form>
+        {% else %}
+        <form action="{% url 'wishlist' auction_id %}" method="POST">
+            {% csrf_token %}
+            <input type="submit" value="Add to Wishlist" class="wish_button" 
+            style="background-color: #6c757d !important; color: #ffffff !important; 
+            border: none !important; border-radius: 6px !important; padding: 2px 6px !important; 
+            font-weight: bold !important; cursor: pointer !important;">
+        </form>
+        {% endif %}
+        {% if close %}
+        <form action="{% url 'closed' auction_id %}" method="POST" >
+            {% csrf_token %}
+            <input type="submit" value="Close Auction" class="wish_button" 
+            style="background-color: #6c757d !important; color: #ffffff !important; border: none !important; 
+            border-radius: 6px !important; padding: 2px 6px !important; font-weight: bold !important; 
+            cursor: pointer !important;">
+        </form>
+        {% endif %}
     {% endif %}
     {% if message %}
         <h5>{{message}}</h5>
@@ -23,29 +50,63 @@
     {% endif %}
 
     <p>{{auction.description}}</p>
-    <h5>R${{auction.initial_value}}</h5>
     
+    {% if auction.closed %}
+        <h2>Sold for R${{auction.initial_value}} by {{auction.user}}</h2>
+    {% else %}
+        {% if not antigo_bid %}
+            <h2>R${{auction.initial_value}}</h2>
+        {% endif %}
+
         {% if antigo_bid %}
-            <p>Current Bid: ${{antigo_bid.value}}</p>
+            <h2>R${{antigo_bid.value}}</h2>
             {% if your_bid %}
-                <p>{{bids}} so far. Your bid is the current bid.</p>
+                <label for="input_value" style="font-size: 15px;">{{bids}} bid(s) so far. Your bid is the current bid.</label>
             {% elif have_bid %}
-                <p>{{bids}} in total. Your bid is not the current.</p>
+                <label for="input_value" style="font-size: 15px;">{{bids}} bid(s) so far. Your bid is not the current.</label>
             {% else %}
-                <p>{{bids}} in total. You dont have a bid.</p>
+                <label for="input_value" style="font-size: 15px;">{{bids}} bid(s) so far. You dont have a bid.</label>
             {% endif %}
         {% else %}
-            <p>Try the first Bid</p>
+            <label for="input_value" style="font-size: 15px;">Try the first Bid</label>
         {% endif %}
 
     <form action="{% url 'bid' auction_id %}" method="POST">
         {% csrf_token %}
         <input type="hidden" name="auction_id" value="{{auction_id}}">
-        <input type="number" name="value" placeholder="Bid" value="{{atual_bid}}" step="0.01">
-        <input type="submit" value="Place Bid" style="background-color: rgb(0, 132, 255); color: white; border-radius: 4px; border: none;">
+        <input type="number" id="input_value" name="value" placeholder="Bid" value="{{atual_bid}}" step="0.01" style="width: 100%; margin-bottom: 20px; padding: 5px;">
+        <input type="submit" value="Place Bid" style="background-color: rgb(0, 132, 255); color: white; border-radius: 4px; border: none; margin-bottom: 30px; padding: 10px;">
     </form>
-
+    {% endif %}
+    
     <h5>Details: </h5>
-    <ul>Listed by: {{auction.user}}</ul>
-    <ul>Category: {{auction.category}}</ul>
+    {% if auction.category %}
+        <li>
+            <ul>Listed by: {{auction.user}}</ul>
+            <ul>Category:<a href="{% url 'category' category %}"> {{auction.category}}</a></ul>
+        </li>
+    {% else %}
+        <ul>Listed by: {{auction.user}}</ul>
+        <ul>Category: No Category Listed</ul>
+    {% endif %}
+    
+    {% if auction.closed %}
+        {{empty}}
+    {% else %}
+        <form action="{% url 'message' auction_id %}" method="POST">
+            {% csrf_token %}
+            <input type="text" name="message" placeholder="Comment">
+            <input type="submit" value="Place Comment" style="background-color: rgb(0, 132, 255); 
+            color: white; border-radius: 4px; border: none; margin-bottom: 30px; padding: 4px;">
+        </form>
+    {% endif %}
+
+    {% if comments %}
+        <h5>Comments: </h5>
+        {% for comment in comments %}
+            <p><strong>{{comment.user}}</strong>: {{comment.message}}</p>
+        {% endfor %}
+    {% else %}
+        {{empty}}
+    {% endif %}
 {% endblock %}
