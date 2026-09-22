@@ -149,8 +149,17 @@ def create(request):
 
 def bid(request, auction_id):
     if request.method == "POST":
-        value = float(request.POST["value"])
         user = request.user
+        try:
+            value = float(request.POST["value"])
+        except (ValueError, KeyError):
+            return render(request, "auctions/error.html", {
+                "message": "Por favor, digite um número válido."
+            })
+        if value <= 0:
+            return render(request, "auctions/error.html", {
+                "message": "O valor do lance deve ser maior que zero."
+            })
 
         antigo_bid = Bids.objects.filter(auction_id=auction_id).order_by("value").last()
 
@@ -160,12 +169,13 @@ def bid(request, auction_id):
             antigo_bid = Bids.objects.create(auction=auction, value=value, user=user)
 
             return HttpResponseRedirect(reverse("auction", kwargs={"auction_id": auction_id}))
-            
         else:
-            return render (request, "auctions/auction.html", {
-                    "auction_id": auction_id,
-                    "error": "Bid needs to be bigger than the actual bid",
-                })
+            message = "Bid needs to be bigger than the actual bid"
+
+            return render(request, "auctions/error.html", {
+                "message": message
+            })
+
     return render(request, "auctions/auction.html", {
         "auction_id": auction_id
     })
