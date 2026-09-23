@@ -43,6 +43,7 @@ def auction(request, auction_id):
     your_bid = None
     have_bid = None
     category = auction.category
+    winner = None
 
     if auction.closed == True:
         if user == auction.winner:
@@ -224,7 +225,7 @@ def closed(request, auction_id):
         winner_bid = Bids.objects.filter(auction_id=auction_id).order_by("value").last()
         auction = get_object_or_404(Auction, pk=auction_id)
         auction.closed = True
-        auction.winner = winner_bid.user.id
+        auction.winner = winner_bid.user
         auction.save()
 
         return HttpResponseRedirect(reverse("auction", kwargs={"auction_id": auction_id}))
