@@ -3,6 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 from .models import User, Auction, Bids, Comments, Wishlist
 
@@ -26,7 +27,7 @@ def index(request):
 
 def auction(request, auction_id):
     user = request.user
-    if user is not authenticate:
+    if not request.user.is_authenticated:
         return render(request, "auctions/error.html", {
             "message": "You need to sign in to see the auction"
         })
