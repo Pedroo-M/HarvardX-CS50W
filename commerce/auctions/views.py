@@ -26,6 +26,11 @@ def index(request):
 
 def auction(request, auction_id):
     user = request.user
+    if user is not authenticate:
+        return render(request, "auctions/error.html", {
+            "message": "You need to sign in to see the auction"
+        })
+    
     auction = get_object_or_404(Auction, pk=auction_id)
     antigo_bid = Bids.objects.filter(auction_id=auction_id).order_by("value").last()
     wishlist = Wishlist.objects.filter(user=user,auction=auction).exists()
