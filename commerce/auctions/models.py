@@ -15,6 +15,7 @@ class Auction(models.Model):
     watchlist = models.ManyToManyField(User, blank=True, related_name="watchlist")
     closed = models.BooleanField(blank=True, null=True)
     datetime = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    winner = models.ForeignKey(User, blank=True, null=True, related_name="winner", on_delete=models.CASCADE)
 
 class Bids(models.Model):
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE, related_name="bids")

@@ -17,12 +17,14 @@ def wishes(request):
     return wishes_number
 
 def index(request):
+    user = request.user
     auctions_list = Auction.objects.all()
     wishes_number = wishes(request)
 
     return render(request, "auctions/index.html", {
         "auctions_list": auctions_list,
-        "wishes_number": wishes_number
+        "wishes_number": wishes_number,
+        "user": user
     })
 
 def auction(request, auction_id):
@@ -42,13 +44,11 @@ def auction(request, auction_id):
     have_bid = None
     category = auction.category
 
-
     if auction.closed == True:
-        winner = antigo_bid.user.username
-        if winner != user.username:
+        if user == auction.winner:
+            winner = auction.winner
+        elif user != auction.winner:
             winner = None
-    else:
-        winner = None
 
     if auction.user == user:
         close = True
@@ -221,8 +221,10 @@ def showwishlist(request):
 
 def closed(request, auction_id):
     if request.method == "POST":
+        winner_bid = Bids.objects.filter(auction_id=auction_id).order_by("value").last()
         auction = get_object_or_404(Auction, pk=auction_id)
         auction.closed = True
+        auction.winner = winner_bid.user.id
         auction.save()
 
         return HttpResponseRedirect(reverse("auction", kwargs={"auction_id": auction_id}))
