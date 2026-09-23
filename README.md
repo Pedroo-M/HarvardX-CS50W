@@ -63,4 +63,3 @@ O objetivo do projeto foi construir uma aplicação web de leilões e-commerce d
 - **SQLite3**: Banco de dados relacional nativo do Django para persistência de anúncios, lances, comentários e watchlists.
 - **HTML5, CSS3 & Bootstrap**: Estruturação semântica e estilização dos componentes da interface.
 - **Git & GitHub**: Controle de versão e hospedagem do código-fonte.
-- 
